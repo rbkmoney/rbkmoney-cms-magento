@@ -1,0 +1,31 @@
+<?php
+$order = new Mage_Sales_Model_Order();
+$orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+$order->loadByIncrementId($orderId);
+
+/*** @var RBKmoney_Payform_Helper_Data $data */
+$data = Mage::helper("payform");
+
+$dataLogo = !empty($data->getPaymentFormLogo()) ? 'data-logo="' . $data->getPaymentFormLogo() . '"' : '';
+$companyName = !empty($data->getPaymentFormCompanyName()) ? 'data-name="' . $data->getPaymentFormCompanyName() . '"' : '';
+
+try {
+    $invoice_id = $data->createInvoice($order);
+    $invoice_access_token = $data->createInvoiceAccessToken($invoice_id);
+} catch (Exception $ex) {
+    die($ex->getMessage());
+}
+?>
+<h2><?php echo $this->__('RBKmoney payment') ?></h2>
+
+<script src="<?php echo $data::PAYMENT_FORM_URL; ?>" class="rbkmoney-checkout"
+    data-invoice-id="<?php echo $invoice_id; ?>"
+    data-invoice-access-token="<?php echo $invoice_access_token; ?>"
+    data-endpoint-success="<?php echo $data->getSuccessUrl(); ?>"
+    data-endpoint-fail="<?php echo $data->getFailUrl(); ?>"
+    data-amount="<?php echo number_format($order->getGrandTotal(), 2); ?>"
+    data-currency="<?php echo $order->getBaseCurrency()->getCode(); ?>"
+    <?php echo $dataLogo; ?>
+    <?php echo $companyName; ?>
+>
+</script>
