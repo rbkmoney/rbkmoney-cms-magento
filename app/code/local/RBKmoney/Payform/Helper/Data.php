@@ -1,14 +1,15 @@
 <?php
 
-class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
+class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data
+{
 
     const COMMON_PATH = 'payment/payform/';
 
     /**
      * Payment form
      */
-    const PAYMENT_FORM_URL = 'https://checkout.rbk.money/payframe/payframe.js';
-    const API_URL = 'https://api.rbk.money/v1/';
+    const PAYMENT_FORM_URL = 'http://checkout.rbk.test:8080/checkout.js';
+    const API_URL = 'http://api.rbk.test:8080/v1/';
 
     /**
      * Create invoice settings
@@ -24,59 +25,74 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
     const HTTP_CODE_BAD_REQUEST = 400;
 
     /**
-     * Constants for Callback
-     */
-    const SHOP_ID = 'shop_id';
-    const INVOICE_ID = 'invoice_id';
-    const PAYMENT_ID = 'payment_id';
-    const AMOUNT = 'amount';
-    const CURRENCY = 'currency';
-    const CREATED_AT = 'created_at';
-    const METADATA = 'metadata';
-    const STATUS = 'status';
-    const SIGNATURE = 'HTTP_X_SIGNATURE';
-    const ORDER_ID = 'order_id';
-    const EVENT_TYPE = 'event_type';
-
-    /**
-     * Openssl verify
-     */
-    const OPENSSL_VERIFY_SIGNATURE_IS_CORRECT = 1;
-
-    /**
      * Constants fields settings
      */
     const SETTINGS_SHOP_ID = 'shop_id';
+
     const SETTINGS_PAYMENT_FORM_LOGO = 'payment_form_logo';
     const SETTINGS_PAYMENT_FORM_COMPANY_NAME = 'payment_form_company_name';
+    const SETTINGS_PAYMENT_FORM_BUTTON_LABEL = 'payment_form_button_label';
+    const SETTINGS_PAYMENT_FORM_DESCRIPTION = 'payment_form_description';
+    const SETTINGS_PAYMENT_FORM_CSS_BUTTON = 'payment_form_css_button';
+
     const SETTINGS_PRIVATE_KEY = 'private_key';
     const SETTINGS_CALLBACK_PUBLIC_KEY = 'callback_public_key';
 
-    public function getShopId() {
+    const SETTINGS_DEBUG = 'debug';
+
+
+    public function getShopId()
+    {
         return (int)Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_SHOP_ID);
     }
 
-    public function getPrivateKey() {
-        return Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PRIVATE_KEY);
+    public function getPrivateKey()
+    {
+        return trim(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PRIVATE_KEY));
     }
 
-    public function getCallbackPublicKey() {
-        return Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_CALLBACK_PUBLIC_KEY);
+    public function getCallbackPublicKey()
+    {
+        return trim(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_CALLBACK_PUBLIC_KEY));
     }
 
-    public function getPaymentFormLogo() {
-        return Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_LOGO);
+    public function getPaymentFormLogo()
+    {
+        return trim(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_LOGO));
     }
 
-    public function getPaymentFormCompanyName() {
-        return Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_COMPANY_NAME);
+    public function getPaymentFormCompanyName()
+    {
+        return trim(strip_tags(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_COMPANY_NAME)));
     }
 
-    public function getSuccessUrl() {
+    public function getPaymentFormButtonLabel()
+    {
+        return trim(strip_tags(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_BUTTON_LABEL)));
+    }
+
+    public function getPaymentFormDescription()
+    {
+        return trim(strip_tags(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_DESCRIPTION)));
+    }
+
+    public function getPaymentFormCssButton()
+    {
+        return trim(strip_tags(Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_PAYMENT_FORM_CSS_BUTTON)));
+    }
+
+    public function getDebug()
+    {
+        return Mage::getStoreConfig(static::COMMON_PATH . static::SETTINGS_DEBUG);
+    }
+
+    public function getSuccessUrl()
+    {
         return Mage::getUrl('checkout/onepage/success', array('_secure' => false));
     }
 
-    public function getFailUrl() {
+    public function getFailUrl()
+    {
         return Mage::getUrl('checkout/onepage/error', array('_secure' => false));
     }
 
@@ -94,7 +110,7 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
         $response = $this->_send($url, $this->_getHeaders(), '', 'access_tokens');
 
         if ($response['http_code'] != static::HTTP_CODE_CREATED) {
-            throw new Exception('Возникла ошибка при создания токена для инвойса');
+            throw new Exception('An error occurred while creating Invoice Access Token');
         }
 
         $response_decode = json_decode($response['body'], true);
@@ -116,10 +132,10 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
     {
         $data = [
             'shopID' => $this->getShopId(),
-            'amount' => $this->_prepareAmount(number_format($order->getGrandTotal(), 2)),
+            'amount' => $this->prepareAmount(number_format($order->getGrandTotal(), 2)),
             'metadata' => $this->_prepareMetadata($order),
             'dueDate' => $this->_prepareDueDate(),
-      //      'currency' => $order->getBaseCurrency()->getCode(),
+            //      'currency' => $order->getBaseCurrency()->getCode(),
             'currency' => "RUB",
             'product' => $order->getId(),
             'description' => "",
@@ -129,7 +145,7 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
         $response = $this->_send($url, $this->_getHeaders(), json_encode($data), 'init_invoice');
 
         if ($response['http_code'] != static::HTTP_CODE_CREATED) {
-            $message = 'Возникла ошибка при создания инвойса';
+            $message = 'An error occurred while creating invoice';
             throw new Exception($message);
         }
 
@@ -150,6 +166,17 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
      */
     function _send($url = '', $headers = [], $data = '')
     {
+        $logs = array(
+            'url' => $url,
+            'headers' => $headers,
+            'data' => $data,
+        );
+
+        $logs['request'] = $logs;
+        $message = 'send: ';
+
+        $this->log($message, $logs);
+
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_POST, TRUE);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
@@ -167,6 +194,9 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
             'body' => $body,
             'error' => $curlErrNo,
         ];
+
+        $logs['response'] = $response;
+        $this->log($message, $logs);
 
         curl_close($curl);
 
@@ -200,11 +230,10 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
     {
         return [
             'cms' => 'Magento',
-            'cms_version' =>  Mage::getVersion(),
+            'cms_version' => Mage::getVersion(),
             'module' => 'rbkmoney',
             'order_id' => $order->getId(),
         ];
-
     }
 
     /**
@@ -215,7 +244,7 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
     private function _prepareDueDate()
     {
         date_default_timezone_set('UTC');
-        return date(RBKmoney_Payform_Helper_Data::CREATE_INVOICE_TEMPLATE_DUE_DATE, strtotime(RBKmoney_Payform_Helper_Data::CREATE_INVOICE_DUE_DATE));
+        return date(static::CREATE_INVOICE_TEMPLATE_DUE_DATE, strtotime(static::CREATE_INVOICE_DUE_DATE));
     }
 
     /**
@@ -225,7 +254,7 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
      *
      * @return int
      */
-    private function _prepareAmount($amount)
+    public function prepareAmount($amount)
     {
         return $amount * 100;
     }
@@ -246,6 +275,13 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data  {
         }
 
         return $url;
+    }
+
+    public function log($message, $logs = array(), $level = Zend_Log::INFO, $fileName = "rbkmoney.log")
+    {
+        if (!empty($this->getDebug())) {
+            Mage::log($message . ' ' . print_r($logs, true), $level, $fileName);
+        }
     }
 
 }

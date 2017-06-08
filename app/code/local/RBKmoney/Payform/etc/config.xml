@@ -46,9 +46,13 @@
 				<shop_id>1</shop_id>
 				<payment_form_logo></payment_form_logo>
 				<payment_form_company_name></payment_form_company_name>
+				<payment_form_button_label></payment_form_button_label>
+				<payment_form_description></payment_form_description>
+				<payment_form_css_button></payment_form_css_button>
 				<private_key></private_key>
 				<callback_public_key></callback_public_key>
-				<notification_url></notification_url>
+				<notification_url>http{s}://{your-site}/rbkmoney/payment/notification</notification_url>
+				<debug>0</debug>
 			</payform>
 		</payment>
 	</default>

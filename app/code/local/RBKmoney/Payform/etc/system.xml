@@ -4,17 +4,16 @@
     <sections>
         <payment>
             <groups>
-
                 <payform translate="label comment" module="payform">
                     <label>RBKmoney payment</label>
                     <sort_order>1000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
-                    <expanded>0</expanded>
+                    <expanded>1</expanded>
                     <frontend_class>complex</frontend_class>
                     <frontend_model>payform/adminhtml_system_config_fieldset_group</frontend_model>
-                    <comment>Payment module settings</comment>
+                    <comment>Process payments using your own internet merchant account.</comment>
                     <help_url>https://rbkmoney.github.io/docs/</help_url>
                     <fields>
                         <title translate="label">
@@ -85,6 +84,14 @@
                             <show_in_store>0</show_in_store>
                             <sort_order>8</sort_order>
                         </callback_public_key>
+                        <payment_form_css_button translate="label">
+                            <label>CSS style payment button:</label>
+                            <frontend_type>textarea</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <sort_order>8</sort_order>
+                        </payment_form_css_button>
                         <payment_form_logo translate="label">
                             <label>Logo in payment form:</label>
                             <frontend_type>text</frontend_type>
@@ -101,15 +108,40 @@
                             <show_in_store>0</show_in_store>
                             <sort_order>10</sort_order>
                         </payment_form_company_name>
+                        <payment_form_button_label translate="label">
+                            <label>Button label in payment form:</label>
+                            <frontend_type>text</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <sort_order>10</sort_order>
+                        </payment_form_button_label>
+                        <payment_form_description translate="label">
+                            <label>Description in payment form:</label>
+                            <frontend_type>text</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <sort_order>10</sort_order>
+                        </payment_form_description>
                         <notification_url translate="label">
                             <label>Notification URL</label>
                             <frontend_type>label</frontend_type>
-                            <comment>http{s}://{your-site}/rbkmoney/payment/notification</comment>
+                            <comment></comment>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <sort_order>11</sort_order>
                         </notification_url>
+                        <debug translate="label">
+                            <label>Debug on/off</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <sort_order>12</sort_order>
+                        </debug>
                     </fields>
                 </payform>
             </groups>
