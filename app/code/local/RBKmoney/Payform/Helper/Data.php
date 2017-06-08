@@ -135,8 +135,7 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data
             'amount' => $this->prepareAmount(number_format($order->getGrandTotal(), 2)),
             'metadata' => $this->_prepareMetadata($order),
             'dueDate' => $this->_prepareDueDate(),
-            //      'currency' => $order->getBaseCurrency()->getCode(),
-            'currency' => "RUB",
+            'currency' => $order->getBaseCurrency()->getCode(),
             'product' => $order->getId(),
             'description' => "",
         ];
