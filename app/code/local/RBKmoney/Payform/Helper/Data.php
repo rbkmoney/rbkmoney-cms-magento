@@ -8,8 +8,8 @@ class RBKmoney_Payform_Helper_Data extends Mage_Core_Helper_Data
     /**
      * Payment form
      */
-    const PAYMENT_FORM_URL = 'http://checkout.rbk.test:8080/checkout.js';
-    const API_URL = 'http://api.rbk.test:8080/v1/';
+    const PAYMENT_FORM_URL = 'https://checkout.rbk.money/checkout.js';
+    const API_URL = 'https://api.rbk.money/v1/';
 
     /**
      * Create invoice settings
